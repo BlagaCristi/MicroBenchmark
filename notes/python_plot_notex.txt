@@ -1,0 +1,7 @@
+- one plot with multiple subplots
+- each subplot is made on a folder (all data files inside a folder are plotted on
+	the same subplot)
+- X axis - number of sample
+- Y axis - value (range - [0, maximum of all the files inside a folder])
+
+RUN with ./python_plot <language>

@@ -1,0 +1,32 @@
+- Time measurement -> System.nanoTime() ~ best measure of elapsed time
+- JNI steps:
+	~ javac JavaBenchmark.java -> create class file
+	~ javah JavaBenchmark -> create JNI header file
+	~ implement function in JavaBenchmarkNativeInterface.c defined in JavaBenchmark.h (implement logic in 
+		JavaBenchmarkNativeLogic.c and put it in JavaBenchmarkNative.h and call it from ..Interface.c)
+	~ run :
+		g++ -I/usr/lib/jvm/java-8-openjdk-i386/include -I/usr/lib/jvm/java-8-openjdk-i386/include/linux -shared -fpic -o libjavaBenchmark.so JavaBenchmarkNativeInterface.c JavaBenchmarkNativeLogic.c -lpthread
+	~ start application:
+		java -Djava.library.path=. JavaBenchmark <inline_arguments>
+
+- result of each operation - stored in a file in python plot, from where plots will be built
+- plots in the same folder -> same figure
+- folder path must exist, file not necessaril (if exists => deleted)
+
+Memory allocation:
+	- variable NUMBER_OF_TRIES and ALLOCATED_SIZE (argument 0 and 1)
+	- done both with explicit call to GarbaceCollector and not(actually deallocation)
+	- calling the Garbage Collector does not ensure that it will run!
+
+Memory access time:
+	- online definition = memory access time = time to read a BYTE!!
+	- variable NUMBER_OF_TRIES(argument 2)
+	- done with Unsage to be able to access memory directly
+	- we can only access a memory zone explicitly delcared by us(otherwise exception) =>
+		allocate memory with unsafe and return starting index returned by this
+	- memory access is done randomly to not allow jvm to bring improvements
+
+Thread creation:
+	- variable NUMBER_OF_TRIES (argument 3)
+	- create thread, give a void function that does nothing
+	- start thread, join to wait to finish

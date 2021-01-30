@@ -1,0 +1,14 @@
+Compile with command:
+	- mcs -out:c#_benchmark c#_benchmark.cs./c#_benchmark.exe 1000 1000000 100 100 100 100
+
+Compute elapsed time using StopWatch -> take ElapsedTicks -> divide by StopWatch frequency (OS dependent/independent)
+https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch.frequency?view=netframework-4.8
+
+In C#, when the Garbace Collector is called, it runs EVERY SINGLE TIME.
+
+In order to make the bridge between the c# code and the c code, do the following:
+	- write the c file in c_helper.c
+	- compile it using:
+		gcc -shared -o libChelper.so -fPIC c_helper.c -lpthread
+			-> in order to create a dynamically shared library between the two codes
+	- in c#, specify it as a DLL import with the name "Chelper.so". The "lib" prefix is used in order to be recognised by the Ubuntu OS.

@@ -1,0 +1,45 @@
+C_Benchmark file - control file, main declared here, calls other functions and prints results to files.
+C_Logic file - effectiv implementation of benchmark related operations
+
+~ RUN with command: gcc -o c_benchmark C_Benchmark.c C_Logic.c -lpthread
+
+
+MEMORY ALLOCATION:
+	- both with malloc and calloc(2 lines on the same plot)
+	- variable SIZE and NUMBER OF TRIES
+
+MEMORY ACCESS:
+	- allocate a small array and access, using pointers, a value from it
+	- allocation is necessary to avoid core dumped error
+
+THREAD CREATION:
+	- create a thread with a dummy function that does nothing
+	- measure time between creation and after the main thread returns from join (waiting for the thread with dummy function to finish)
+
+THREAD SWITCH CONTEXT:
+	- implemented using condition variables
+	- SYNC MECHANISM
+		- main - creates thread, blocks it, waits for signal
+		- thread - starts, takes time = SUSPEND_TIME_START, signals main to start, waits for signal
+		- main - starts, takes time = SUSPEND_TIME_FINISH, takes time = RESUME_TIME_START, signal thread to start, waits for signal
+		- thread - starts, takes time = RESUME_TIME_FINISH, stops.
+
+THREAD MIGRATION:
+	- we will make use of <sched.h> library
+	- #define _GNU_SOURCE BEFORE!!!!!! <sched.h> library
+	- functions used ->
+		~ sched_getcpu() = returns the core on which the current thread is running
+		~ sysconf(_SC_NPROCESSORS_ONLN_) = returns the number of cores online (cores may also be
+			offline. Important. They are always numbered from 0 to the returnedValue - 1)
+		~ sched_getaffinity(pid,size,&mask) = 
+			-> pid of process. If 0, current process
+			-> size .. usually size of cpu_set_t
+			-> mask .. type cpu_set_t ~ a simple mask where a 1 bit represents that a thread CAN run
+				on the corresponding core
+		~ CPU_ISSET(pos, &mask) = returns 1 if the bit pos set in the mask. 0 otherwise
+		~ CPU_ZERO(&mask) = sets all the bits from the mask to 0
+		~ CPU_SET(pos, &mask) = sets bit pos to 1 in mask
+		~ sched_setaffinity(pid,size,&mask) = same as get, but SETS the mask
+	- time taken with clock_gettime(CLOCK_MONOTONIC, struct) :
+		~ from internet, CLOCK_MONOTONIC is the entire elapsed time, including time spent blocked or other slowdowns
+https://stackoverflow.com/questions/10490756/how-to-use-sched-getaffinity-and-sched-setaffinity-in-linux-from-c

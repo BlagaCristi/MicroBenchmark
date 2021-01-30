@@ -1,0 +1,6 @@
+JTabbedPane model ~ each benchmark will have an individual benchmark
+- 6 values needed - all must be present
+- by pressing start button, java benchmark is called (has to already be compilled and everything)
+
+- when adding a new pane, create a new panel, add it in the JTabbedPane and initialize it exactly as for JAVA_BENCHMARK
+- when values are not ok, a dialog frame pops-up
